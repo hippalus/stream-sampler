@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: test
+
+application:
+  stream-sampler:
+    bootstrap-servers: 127.0.0.1:9092
+    inbound-topic: characters
+    application-id: kafka-streams-sampler
+    client-id: kafka-streams-sampler-client
+
+
+
