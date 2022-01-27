@@ -1,7 +1,6 @@
 package com.hippalus.streamsampler.sampling.streams;
 
 import java.util.Collection;
-import org.apache.kafka.streams.KafkaStreams;
 
 public interface StreamSampler<T> {
 
@@ -11,11 +10,7 @@ public interface StreamSampler<T> {
 
   Collection<T> currentSample();
 
-  static void cleanLocalState(KafkaStreams streams) {
-    if (streams != null) {
-      streams.cleanUp();
-    }
-  }
+  void cleanLocalState();
 
   default void addShutdownHookAndBlock(final StreamSampler<?> streamSampler) {
     Thread.currentThread().setUncaughtExceptionHandler((t, e) -> streamSampler.stop());

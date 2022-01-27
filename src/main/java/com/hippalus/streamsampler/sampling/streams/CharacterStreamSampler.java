@@ -32,8 +32,9 @@ public class CharacterStreamSampler implements StreamSampler<Character> {
   @Override
   public void start(final int sampleSize) {
     initRandomSampler(sampleSize);
-    final Topology samplerTopology = buildSamplerTopology(config);
+    final Topology samplerTopology = buildSamplerTopology();
     this.characterKStream = new KafkaStreams(samplerTopology, config.defaultStreamConfig());
+    cleanLocalState();// TODO: conditional clean by application profile. Don't use in production mode
     this.characterKStream.start();
     addShutdownHookAndBlock(this);
   }
@@ -44,7 +45,7 @@ public class CharacterStreamSampler implements StreamSampler<Character> {
     this.randomSampler = new RandomReservoirSampler<>(sampleSize, sampleQueue, samplerLock);
   }
 
-  private Topology buildSamplerTopology(final StreamSamplerConfig config) {
+  private Topology buildSamplerTopology() {
     final StreamsBuilder builder = new StreamsBuilder();
     builder
         .stream(config.getInboundTopic(), config.inboundSerDes())
@@ -68,6 +69,13 @@ public class CharacterStreamSampler implements StreamSampler<Character> {
   public void stop() {
     if (characterKStream != null) {
       characterKStream.close();
+    }
+  }
+
+  @Override
+  public void cleanLocalState() {
+    if (characterKStream != null) {
+      characterKStream.cleanUp();
     }
   }
 

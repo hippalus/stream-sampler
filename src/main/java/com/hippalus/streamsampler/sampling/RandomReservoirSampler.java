@@ -50,7 +50,7 @@ public class RandomReservoirSampler<T> implements RandomSampler<T> {
 
   @Override
   public Collection<T> sample() {
-    return sampleQueue.stream().sorted().map(Sample::getElement).toList();
+    return sampleQueue.stream().map(Sample::getElement).toList();
   }
 
   @Override

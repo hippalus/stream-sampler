@@ -8,3 +8,5 @@ application:
     inbound-topic: characters
     application-id: kafka-streams-sampler
     client-id: kafka-streams-sampler-client
+redis:
+  addresses: "redis://127.0.0.1:6379"
