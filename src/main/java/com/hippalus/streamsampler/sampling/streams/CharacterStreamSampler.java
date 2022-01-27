@@ -77,6 +77,7 @@ public class CharacterStreamSampler implements StreamSampler<Character> {
     if (characterKStream != null) {
       characterKStream.cleanUp();
     }
+    randomSampler.clear();
   }
 
   @Override

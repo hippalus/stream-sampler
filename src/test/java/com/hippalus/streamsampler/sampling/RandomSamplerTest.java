@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -100,8 +99,8 @@ class RandomSamplerTest {
     }
 
     @Override
-    public Stream<E> stream() {
-      return queue.stream();
+    public List<E> readAll() {
+      return queue.stream().toList();
     }
   }
 

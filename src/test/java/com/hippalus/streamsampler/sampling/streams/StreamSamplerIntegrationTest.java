@@ -1,8 +1,7 @@
 package com.hippalus.streamsampler.sampling.streams;
 
 import com.hippalus.streamsampler.AbstractIntegrationTest;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+import java.util.Collection;
 import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -52,25 +51,20 @@ class StreamSamplerIntegrationTest extends AbstractIntegrationTest {
         .mapToObj(value -> RandomStringUtils.randomAlphabetic(100))
         .forEach(s -> kafkaTemplate.send("characters-integration-test", s));
 
-    //when
-    new Thread(() -> characterStreamSampler.start(10)).start();
+    final int expectedSampleSize = 15;
+    new Thread(() -> characterStreamSampler.start(expectedSampleSize)).start();
 
-    //and then
-    TestUtils.waitForCondition(() -> getCurrentSample().length() == 10, 50000, "Timed out getting currentSample");
-    final String currentSample = getCurrentSample();
-    log.info("Sample {}", currentSample);
+    //and
+    TestUtils.waitForCondition(() -> characterStreamSampler.currentSample().size() == expectedSampleSize, 500000,
+        "Timed out getting currentSample");
+
+    //when
+    final Collection<Character> currentSample = characterStreamSampler.currentSample();
+    final int actualSampleSize = currentSample.size();
+    log.info("Sample {} size {}", currentSample, actualSampleSize);
 
     //then
-    Assertions.assertEquals(10, currentSample.length());
-
-
-  }
-
-  private String getCurrentSample() {
-    return characterStreamSampler.currentSample()
-        .stream()
-        .map(Object::toString)
-        .collect(Collectors.joining());
+    Assertions.assertEquals(expectedSampleSize, actualSampleSize);
   }
 
 }

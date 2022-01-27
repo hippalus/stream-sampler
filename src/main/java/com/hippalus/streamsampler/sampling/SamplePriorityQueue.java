@@ -1,6 +1,6 @@
 package com.hippalus.streamsampler.sampling;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 public interface SamplePriorityQueue<E> {
 
@@ -16,5 +16,5 @@ public interface SamplePriorityQueue<E> {
 
   void clear();
 
-  Stream<E> stream();
+  List<E> readAll();
 }

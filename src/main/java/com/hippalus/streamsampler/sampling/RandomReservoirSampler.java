@@ -50,7 +50,13 @@ public class RandomReservoirSampler<T> implements RandomSampler<T> {
 
   @Override
   public Collection<T> sample() {
-    return sampleQueue.stream().map(Sample::getElement).toList();
+    // wait until expected size equals current size
+    // when call sampleQueue.remove() and  sample() at the same time, we are waiting new random element adding to sampleQueue
+    while (true) {
+      if (sampleSize == sampleQueue.size()) {
+        return sampleQueue.readAll().stream().map(Sample::getElement).toList();
+      }
+    }
   }
 
   @Override
