@@ -161,9 +161,11 @@ public class CommandLineCharacterStreamSamplerRunner implements CommandLineRunne
 
   private void printHelp(Options opts) {
     helpFormatter.printHelp(
-        "cat file.txt | ./stream-sampler.sh -n SAMPLE SIZE",
         """
-            Creates a random representative sample of length SAMPLE SIZE out of the input.
+            cat file.txt | ./stream-sampler.sh -n SAMPLE_SIZE
+            """,
+        """
+            Creates a random representative sample of length SAMPLE_SIZE out of the input.
             Input is either STDIN, or randomly generated within application.
             """,
         opts,

@@ -1,18 +1,18 @@
 package com.hippalus.streamsampler.sampling;
 
 import java.util.List;
-import org.redisson.api.RPriorityBlockingQueue;
+import org.redisson.api.RPriorityQueue;
 import org.redisson.api.RedissonClient;
 
 public class SamplePriorityQueueRedisAdapter<E> implements SamplePriorityQueue<E> {
 
-  private final RPriorityBlockingQueue<E> queue;
+  private final RPriorityQueue<E> queue;
 
   public SamplePriorityQueueRedisAdapter(RedissonClient redissonClient) {
-    this(redissonClient.getPriorityBlockingQueue("sample-queue"));
+    this(redissonClient.getPriorityQueue("sample-queue"));
   }
 
-  public SamplePriorityQueueRedisAdapter(RPriorityBlockingQueue<E> queue) {
+  public SamplePriorityQueueRedisAdapter(RPriorityQueue<E> queue) {
     this.queue = queue;
   }
 
