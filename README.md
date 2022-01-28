@@ -81,6 +81,9 @@ mvn clean test
 ```
 
 ## Code Covarage
+![Screenshot from 2022-01-28 13-22-05](https://user-images.githubusercontent.com/17534654/151549490-24c6560a-8d89-4cfb-ac1c-7bba71091462.png)
+
+![Screenshot from 2022-01-28 13-23-47](https://user-images.githubusercontent.com/17534654/151549522-17522426-2cea-4ae3-88fd-10e02f7c9200.png)
 
 ## Used Technologies
 
