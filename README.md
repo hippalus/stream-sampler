@@ -25,7 +25,9 @@ TODO : Perhaps Rest endpoint can be developed to retrieve that the sample at any
 
 ## System Design
 
-![Uygulama Ekran Görüntüsü](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![g drawio (1)](https://user-images.githubusercontent.com/17534654/151557171-bf7469a2-0609-42b7-95e1-c1d5976f40bf.png)
+
+
 
 ## Requirements and Run
 
