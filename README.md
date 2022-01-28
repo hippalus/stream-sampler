@@ -47,7 +47,7 @@ TODO : Perhaps Rest endpoint can be developed to retrieve that the sample at any
 Make sure the Docker containers are successfully installed and up.
 
 ```bash 
-  cat file.txt | ./stream-sampler -n SAMPLE_SIZE
+  cat input.txt | ./stream-sampler -n SAMPLE_SIZE
 
   or
 
