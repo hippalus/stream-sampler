@@ -1,14 +1,14 @@
 package com.hippalus.streamsampler.cli;
 
+import com.hippalus.streamsampler.sampling.Utils;
 import com.hippalus.streamsampler.sampling.streams.StreamSampler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.CommandLine;
@@ -87,7 +87,7 @@ public class CommandLineCharacterStreamSamplerRunner implements CommandLineRunne
       try {
         final String sample = getSample();
         log.info("Current Sample {}", sample);
-        sleep(1000);
+        Utils.sleep(10000);
       } catch (Exception ignored) {
         //ignored
       }
@@ -102,12 +102,13 @@ public class CommandLineCharacterStreamSamplerRunner implements CommandLineRunne
   }
 
   private void generateRandomDataAndFeedCharTopic(Long generateCount) {
-    final String randomString = RandomStringUtils.randomAlphabetic(generateCount.intValue());
-    final int partial = (int) (generateCount / 100);
-    IntStream.range(0, partial)
-        .mapToObj(value -> randomString.substring(value, value * 100))
-        .forEach(s1 -> kafkaTemplate.send(new ProducerRecord<>(characterTopicName, null, s1)));
+    RandomStringUtils.randomAlphabetic(generateCount.intValue())
+        .chars()
+        .mapToObj(Utils::castToChar)
+        .filter(Objects::nonNull)
+        .forEach(character -> kafkaTemplate.send(new ProducerRecord<>(characterTopicName, null, character.toString())));
   }
+
 
   private Options prepareOptions() {
     Options opts = new Options();
@@ -146,7 +147,13 @@ public class CommandLineCharacterStreamSamplerRunner implements CommandLineRunne
 
   private void readStdInAndFeedCharTopic() {
     try (final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
-      bufferedReader.lines().forEach(line -> kafkaTemplate.send(new ProducerRecord<>(characterTopicName, null, line)));
+      bufferedReader.lines()
+          .<Character>mapMulti((s, consumer) -> s.chars()
+              .mapToObj(Utils::castToChar)
+              .filter(Objects::nonNull)
+              .forEach(consumer))
+          .map(Object::toString)
+          .forEach(charStr -> kafkaTemplate.send(new ProducerRecord<>(characterTopicName, null, charStr)));
     } catch (IOException e) {
       log.error("Exception has been occurred while reading stdin", e);
     }
@@ -158,18 +165,10 @@ public class CommandLineCharacterStreamSamplerRunner implements CommandLineRunne
         """
             Creates a random representative sample of length SAMPLE SIZE out of the input.
             Input is either STDIN, or randomly generated within application.
-            If SEED is specified, then it's used for both - sample creation and input generation.
             """,
         opts,
         ""
     );
   }
 
-  private void sleep(long timeout) {
-    try {
-      TimeUnit.MILLISECONDS.sleep(timeout);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
-  }
 }

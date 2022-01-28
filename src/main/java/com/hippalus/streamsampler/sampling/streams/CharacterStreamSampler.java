@@ -13,7 +13,6 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.redisson.api.RedissonClient;
@@ -49,20 +48,11 @@ public class CharacterStreamSampler implements StreamSampler<Character> {
     final StreamsBuilder builder = new StreamsBuilder();
     builder
         .stream(config.getInboundTopic(), config.inboundSerDes())
-        .mapValues((key, value) -> value.chars().mapToObj(this::castToChar))
         .filter((key, value) -> Objects.nonNull(value))
-        .flatMap((key, characterStream) -> characterStream.map(character -> KeyValue.pair(key, character)).toList())
-        .foreach((key, value) -> randomSampler.feed(value));
+        .filter((key, value) -> !value.isEmpty())
+        .mapValues((readOnlyKey, value) -> value.charAt(0))// we assumed that each incoming String is a Character
+        .foreach((key, value) -> randomSampler.feed(value)); //distributed stateless
     return builder.build();
-  }
-
-  private Character castToChar(int i) {
-    try {
-      return (char) i;
-    } catch (Exception exception) {
-      log.error("Exception has been occurred while casting {} to char. {}", i, exception.getMessage());
-    }
-    return null;
   }
 
   @Override

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -23,7 +24,8 @@ class RandomSamplerTest {
   static void setUp() {
     RandomStringUtils.randomAlphabetic(10000)
         .chars()
-        .mapToObj(value -> (char) value)
+        .mapToObj(Utils::castToChar)
+        .filter(Objects::nonNull)
         .forEach(SOURCE::add);
   }
 

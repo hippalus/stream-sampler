@@ -1,8 +1,9 @@
 package com.hippalus.streamsampler.sampling.streams;
 
 import com.hippalus.streamsampler.AbstractIntegrationTest;
+import com.hippalus.streamsampler.sampling.Utils;
 import java.util.Collection;
-import java.util.stream.IntStream;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.kafka.test.TestUtils;
@@ -47,9 +48,11 @@ class StreamSamplerIntegrationTest extends AbstractIntegrationTest {
   @Test
   void shouldConsumeSourceKafkaTopicAndRandomlySampleFromKStream() throws InterruptedException {
     //given
-    IntStream.range(0, 100)
-        .mapToObj(value -> RandomStringUtils.randomAlphabetic(100))
-        .forEach(s -> kafkaTemplate.send("characters-integration-test", s));
+    RandomStringUtils.randomAlphabetic(10000)
+        .chars()
+        .mapToObj(Utils::castToChar)
+        .filter(Objects::nonNull)
+        .forEach(s -> kafkaTemplate.send("characters-integration-test", s.toString()));
 
     final int expectedSampleSize = 15;
     new Thread(() -> characterStreamSampler.start(expectedSampleSize)).start();
