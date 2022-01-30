@@ -12,7 +12,7 @@ consumption. So they need to data partitioning and algorithm scalability. When t
 with BufferedReader and each data is published to Kafka topic.
 
 A KafkaStream topology is start, which consumes the topic created with sample size information and runs the mentioned above
-algorithm on the streaming data. This application is compatible for scalability.For example, if the character-kafka-subject has 10
+algorithm on the streaming data. This application is compatible for scalability.For example, if the character-kafka-topic has 10
 partitions, this application can be scaled up to 10 instances. However, it needs some refactoring, such as separating the producer
 and the consumer (KStream Topology) into different processes. By using redis priority queue and redis lock for random sample, we
 ensured that the application can run stateless when scaled and the algorithm is consistent.
